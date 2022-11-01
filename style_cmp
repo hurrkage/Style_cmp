@@ -1,0 +1,32 @@
+#!/bin/bash
+if [[ $# -lt 1 ]] || [[ $# -gt 2 ]]
+then
+    1>&2 echo "Error: Missing Argument or too many arguments!"
+    exit 2
+fi
+
+if [[ $# -eq 1 ]]
+then
+    if [[ -f $1 ]]
+    then
+        source profile $1
+    else
+        1>&2 echo "Error: could not find file $1"
+        exit 1
+    fi
+fi
+
+if [[ $# -eq 2 ]]
+then
+    if [[ -f $1 ]] && [[ -f $2 ]] 
+    then
+        source normalised_profile $1 >> profile1.txt
+        source normalised_profile $2 >> profile2.txt
+        echo "The Euclidian Distance between the two texts is: $(source euclidian_distance)"
+        rm profile1.txt
+        rm profile2.txt
+    else
+        1>&2 echo "Error: file or files could not be found"
+        exit 1
+    fi
+fi

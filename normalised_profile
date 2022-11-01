@@ -1,0 +1,25 @@
+#!/bin/bash
+#Array of conjuctions
+conjunctions=("also" "although" "and" "as" "because" "before" "but" "for" "if" "nor" "of" "or" "since" "that" "though" "until" "when" "whenever" "whereas" "which" "while" "yet")
+
+#Count of each individual style-marker
+comma=$(grep -o '\,' $1 | wc -l)
+compound=$(sed 's/--/ /g' $1 | grep -o "[^ ]*[^ ][-][a-z]*" | wc -l)
+contraction=$(sed 's/--/ /g' $1 | grep -o "[A-Za-z]*[^ ]'[-a-rt-z]" | wc -l)
+semicolon=$(grep -o ';' $1 | wc -l)
+sentences=$(grep -o "[\.\!\?]" $1 | wc -l)
+words=$(sed 's/--/ /g' $1 | sed 's/[ ]-[ ]/ /g' | wc -w)
+for str in ${conjunctions[@]}; do
+    echo $(awk -v var1=$(grep -ioP "\b$str\b(?!')(?!-)" $1 | wc -l) -v var2=$words 'BEGIN { print (var1 / var2)*1000 }') >> profile.txt
+done
+
+#Creation of normalised profiles
+echo $(awk -v var1=$comma -v var2=$words 'BEGIN { print (var1 / var2)*1000 }') >> profile.txt
+echo $(awk -v var1=$compound -v var2=$words 'BEGIN { print (var1 / var2)*1000 }') >> profile.txt
+echo $(awk -v var1=$contraction -v var2=$words 'BEGIN { print (var1 / var2)*1000 }') >> profile.txt
+echo $(awk -v var1=$semicolon -v var2=$words 'BEGIN { print (var1 / var2)*1000 }') >> profile.txt
+echo $(awk -v var1=$sentences -v var2=$words 'BEGIN { print (var2 / var1) }') >> profile.txt
+cat profile.txt
+rm profile.txt
+
+

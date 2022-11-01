@@ -1,0 +1,3 @@
+#!/bin/bash
+#Calculation of Euclidian Distance metric
+paste profile1.txt profile2.txt | awk '{s += ($1-$2)^2}; END{print sqrt(s+0)}'
